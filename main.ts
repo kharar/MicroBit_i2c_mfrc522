@@ -59,6 +59,7 @@ function CommunicateWithPICC () {
     serial.writeLine("Retrieve data...")
     serial.writeLine("byte n = PCD_ReadRegister(FIFOLevelReg);")
     n = I2C_ReadRegister(MFRC522_I2C_Address, 10)
+    serial.writeValue("n", n)
     serial.writeLine("PCD_ReadRegister(FIFODataReg, n, backData, rxAlign);")
     values = [n]
     for (let index = 0; index <= n - 1; index++) {
@@ -66,8 +67,9 @@ function CommunicateWithPICC () {
     }
     serial.writeLine("_validBits = PCD_ReadRegister(ControlReg) & 0x07;")
     validBits = custom.BitwiseAnd(I2C_ReadRegister(MFRC522_I2C_Address, 12), 7)
-    serial.writeLine("if (errorRegValue & 0x08)")
+    serial.writeValue("validBits", validBits)
     if (custom.BitwiseAnd(errorRegValue, 8) != 0) {
+        serial.writeLine("if (errorRegValue & 0x08)")
         serial.writeLine("ErrorReg: CollErr")
         return 4
     }
@@ -102,7 +104,6 @@ basic.forever(function () {
     serial.writeLine("PCD_ClearRegisterBitMask(CollReg, 0x80);")
     I2C_ClearRegisterBitMask(1, 1, 0)
     serial.writeLine("status = PCD_TransceiveData(&command, 1, bufferATQA, bufferSize, &validBits);")
-    CommunicateWithPICC()
     if (CommunicateWithPICC() == 0) {
         for (let index = 0; index <= n - 1; index++) {
             let list: number[] = []
