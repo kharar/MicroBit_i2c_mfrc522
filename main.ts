@@ -20,7 +20,7 @@ function I2C_ClearRegisterBitMask (address: number, register: number, mask: numb
     tmp = I2C_ReadRegister(address, register)
     I2C_WriteRegister(address, register, custom.BitwiseOr(tmp, mask))
 }
-function CommunicateWithPICC (command: number, waitIRq: number, validBits: number, rxAlign: number) {
+function CommunicateWithPICC () {
     serial.writeLine("PCD_WriteRegister(CommandReg, PCD_Idle);")
     I2C_WriteRegister(MFRC522_I2C_Address, 1, 0)
     serial.writeLine("PCD_WriteRegister(ComIrqReg, 0x7F);")
@@ -102,4 +102,15 @@ basic.forever(function () {
     serial.writeLine("PCD_ClearRegisterBitMask(CollReg, 0x80);")
     I2C_ClearRegisterBitMask(1, 1, 0)
     serial.writeLine("status = PCD_TransceiveData(&command, 1, bufferATQA, bufferSize, &validBits);")
+    CommunicateWithPICC()
+    if (CommunicateWithPICC() == 0) {
+        for (let index = 0; index <= n - 1; index++) {
+            let list: number[] = []
+            serial.writeNumber(list[index])
+            serial.writeString(" ")
+        }
+    }
+    serial.writeLine("")
+    basic.pause(500)
+    serial.writeLine("Restarting...")
 })
