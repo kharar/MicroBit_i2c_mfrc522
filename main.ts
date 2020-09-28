@@ -2,16 +2,16 @@ function SetRegisterBitMask (address: number, register: number, mask: number) {
     tmp = I2C_ReadRegister(address, register)
     I2C_WriteRegister(address, register, custom.BitwiseAnd(tmp, mask))
 }
-function I2C_WriteRegister (addr: number, reg: number, val: number) {
+function I2C_WriteRegister (address: number, register: number, value: number) {
     pins.i2cWriteNumber(
-    addr,
-    reg,
+    address,
+    register,
     NumberFormat.UInt8LE,
     true
     )
     pins.i2cWriteNumber(
-    addr,
-    val,
+    address,
+    value,
     NumberFormat.UInt8LE,
     false
     )
@@ -76,14 +76,14 @@ function CommunicateWithPICC () {
     serial.writeLine("CommunicateWithPICC: OK")
     return 0
 }
-function I2C_ReadRegister (addr: number, reg: number) {
+function I2C_ReadRegister (address: number, register: number) {
     pins.i2cWriteNumber(
-    addr,
-    reg,
+    address,
+    register,
     NumberFormat.UInt8LE,
     true
     )
-    return pins.i2cReadNumber(addr, NumberFormat.UInt8LE, false)
+    return pins.i2cReadNumber(address, NumberFormat.UInt8LE, false)
 }
 let validBits = 0
 let values: number[] = []
@@ -112,6 +112,6 @@ basic.forever(function () {
         }
     }
     serial.writeLine("")
-    basic.pause(500)
+    basic.pause(1000)
     serial.writeLine("Restarting...")
 })
