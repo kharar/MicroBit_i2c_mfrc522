@@ -22,17 +22,18 @@ namespace custom {
     * @param s describe parameter here, eg: "Hello"
     * @param e describe parameter here
     */
-    /* //% block */
+    // block
     export function foo(n: number, s: string, e: MyEnum): void {
         // Add code here
     }
 
     /**
     * TODO: describe your function here
-    * @param value describe value here, eg: 5
+    * @param value1 describe value here, eg: 5
+    * @param value2 describe value here, eg: 5
     */
     //% block
-    export function fib(value: number): number {
-        return value <= 1 ? value : fib(value -1) + fib(value - 2);
+    export function BitwiseAnd(value1: number, value2: number): number {
+        return value1 & value2;
     }
 }
