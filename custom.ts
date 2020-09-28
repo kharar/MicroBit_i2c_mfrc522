@@ -36,4 +36,14 @@ namespace custom {
     export function BitwiseAnd(value1: number, value2: number): number {
         return value1 & value2;
     }
+
+    /**
+    * TODO: describe your function here
+    * @param value1 describe value here, eg: 5
+    * @param value2 describe value here, eg: 5
+    */
+    //% block
+    export function BitwiseOr(value1: number, value2: number): number {
+        return value1 | value2;
+    }
 }
