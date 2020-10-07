@@ -94,6 +94,7 @@ let tmp = 0
 let MFRC522_I2C_Address = 0
 serial.redirectToUSB()
 serial.writeLine("Reference: github.com/semaf/MFRC522_I2C_Library")
+serial.writeLine("Reference: www.nxp.com/docs/en/data-sheet/MFRC522.pdf")
 MFRC522_I2C_Address = 40
 basic.forever(function () {
     serial.writeLine("PCD_WriteRegister(TxModeReg, 0x00);")
