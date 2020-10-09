@@ -1,3 +1,11 @@
+function i2c_HEX_WriteRegister (register: string, data: string) {
+    pins.i2cWriteNumber(
+    MFRC522_I2C_Address,
+    custom.fn_HextoDec("" + register + data),
+    NumberFormat.UInt16BE,
+    false
+    )
+}
 function SetRegisterBitMask (address: number, register: number, mask: number) {
     tmp = I2C_ReadRegister(address, register)
     I2C_WriteRegister(address, register, custom.BitwiseAnd(tmp, mask))
@@ -12,9 +20,22 @@ function I2C_WriteRegister (address: number, register: number, value: number) {
     pins.i2cWriteNumber(
     address,
     value,
-    NumberFormat.UInt8LE,
+    NumberFormat.Int16BE,
     false
     )
+}
+function I2C_HEX_ReadRegisterMulti (register: string, numberOfBytes: number) {
+    list = []
+    pins.i2cWriteNumber(
+    MFRC522_I2C_Address,
+    custom.fn_HextoDec(register),
+    NumberFormat.UInt8LE,
+    true
+    )
+    for (let index = 0; index <= numberOfBytes - 1; index++) {
+        list.push(pins.i2cReadNumber(MFRC522_I2C_Address, NumberFormat.UInt8BE, index <= numberOfBytes - 1))
+    }
+    return list
 }
 function I2C_ClearRegisterBitMask (address: number, register: number, mask: number) {
     tmp = I2C_ReadRegister(address, register)
@@ -76,6 +97,21 @@ function CommunicateWithPICC () {
     serial.writeLine("CommunicateWithPICC: OK")
     return 0
 }
+function I2C_HEX_ClearRegisterBitMask (register: string, mask: string) {
+    tmp = I2C_HEX_ReadRegister(register)
+    temp = custom.BitwiseOr(tmp, custom.fn_HextoDec(mask))
+    serial.writeLine("I2C_HEX_ClearRegisterBitMask: Routine needs some finishing")
+    i2c_HEX_WriteRegister(register, "26")
+}
+function I2C_HEX_ReadRegister (register: string) {
+    pins.i2cWriteNumber(
+    MFRC522_I2C_Address,
+    custom.fn_HextoDec(register),
+    NumberFormat.UInt8LE,
+    true
+    )
+    return pins.i2cReadNumber(MFRC522_I2C_Address, NumberFormat.UInt8BE, false)
+}
 function I2C_ReadRegister (address: number, register: number) {
     pins.i2cWriteNumber(
     address,
@@ -83,13 +119,15 @@ function I2C_ReadRegister (address: number, register: number) {
     NumberFormat.UInt8LE,
     true
     )
-    return pins.i2cReadNumber(address, NumberFormat.UInt8LE, false)
+    return pins.i2cReadNumber(address, NumberFormat.UInt8BE, false)
 }
+let temp = 0
 let validBits = 0
 let values: number[] = []
 let errorRegValue = 0
 let n = 0
 let i = 0
+let list: number[] = []
 let tmp = 0
 let MFRC522_I2C_Address = 0
 serial.redirectToUSB()
@@ -97,23 +135,12 @@ serial.writeLine("Reference: github.com/semaf/MFRC522_I2C_Library")
 serial.writeLine("Reference: www.nxp.com/docs/en/data-sheet/MFRC522.pdf")
 MFRC522_I2C_Address = 40
 basic.forever(function () {
+    basic.pause(10)
     serial.writeLine("PCD_WriteRegister(TxModeReg, 0x00);")
-    I2C_WriteRegister(MFRC522_I2C_Address, 18, 0)
+    i2c_HEX_WriteRegister("12", "00")
     serial.writeLine("PCD_WriteRegister(RxModeReg, 0x00);")
-    I2C_WriteRegister(MFRC522_I2C_Address, 19, 0)
+    i2c_HEX_WriteRegister("13", "00")
     serial.writeLine("PCD_WriteRegister(ModWidthReg, 0x26);")
-    I2C_WriteRegister(MFRC522_I2C_Address, 36, 38)
+    i2c_HEX_WriteRegister("24", "26")
     serial.writeLine("PCD_ClearRegisterBitMask(CollReg, 0x80);")
-    I2C_ClearRegisterBitMask(1, 1, 0)
-    serial.writeLine("status = PCD_TransceiveData(&command, 1, bufferATQA, bufferSize, &validBits);")
-    if (CommunicateWithPICC() == 0) {
-        for (let index = 0; index <= n - 1; index++) {
-            let list: number[] = []
-            serial.writeNumber(list[index])
-            serial.writeString(" ")
-        }
-    }
-    serial.writeLine("")
-    basic.pause(1000)
-    serial.writeLine("Restarting...")
 })

@@ -69,7 +69,7 @@ namespace custom {
             return num ^ (1 << pos)
     }
 
-    let hex_arr = "0123456789abcdef"
+    let hex_arr = "0123456789ABCDEF"
     let dec_num = 0
 
     //% blockId="id_hextodec" block="hex %hex_num | to dec"
