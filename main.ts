@@ -7,8 +7,9 @@ function i2c_HEX_WriteRegister (register: string, data: string) {
     )
 }
 function about () {
-    serial.writeLine("Reference: github.com/semaf/MFRC522_I2C_Library")
-    serial.writeLine("Reference: www.nxp.com/docs/en/data-sheet/MFRC522.pdf")
+    serial.writeLine("References:")
+    serial.writeLine("www.nxp.com/docs/en/data-sheet/MFRC522.pdf")
+    serial.writeLine("github.com/semaf/MFRC522_I2C_Library")
 }
 function I2C_HEX_ReadRegisterMulti (register: string, numberOfBytes: number) {
     list = []
@@ -74,8 +75,8 @@ basic.forever(function () {
     expectedValue = custom.fn_HextoDec("07")
     obtainedValue = I2C_HEX_ReadRegister("0D")
     i2c_HEX_WriteRegister("0D", "87")
-    obtainedValue = 44
-    while (obtainedValue == 44) {
+    obtainedValue = custom.fn_HextoDec("44")
+    while (obtainedValue == custom.fn_HextoDec("04")) {
         obtainedValue = I2C_HEX_ReadRegister("04")
         serial.writeValue("04", obtainedValue)
     }
